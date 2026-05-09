@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from models import Base, User
 import os
 
-DATABASE_URL = "sqlite+aiosqlite:///./kondate.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./kondate.db")
 
 engine = create_async_engine(
     DATABASE_URL,
