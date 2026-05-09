@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#FF6B35" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="献立共有" />
+  <meta name="description" content="夫婦で夕飯の献立を共有するアプリ" />
+  <title>献立共有アプリ</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- User selection modal -->
+  <div id="user-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card user-select-card">
+      <div class="modal-header">
+        <h2>ようこそ！</h2>
+        <p>あなたはどちらですか？</p>
+      </div>
+      <div class="user-select-buttons">
+        <button class="user-btn husband-btn" data-role="husband" data-id="1">
+          <span class="user-icon">👨</span>
+          <span>夫</span>
+        </button>
+        <button class="user-btn wife-btn" data-role="wife" data-id="2">
+          <span class="user-icon">👩</span>
+          <span>妻</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <h1 class="app-title">🍱 献立共有</h1>
+    </div>
+    <div class="header-right">
+      <span id="current-user-badge" class="user-badge"></span>
+      <button id="change-user-btn" class="icon-btn" title="ユーザー変更">⚙️</button>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="app-main">
+
+    <!-- Calendar View -->
+    <section id="view-calendar" class="view active">
+      <div class="week-nav">
+        <button id="prev-week-btn" class="nav-btn">‹ 前週</button>
+        <h2 id="week-label" class="week-label"></h2>
+        <button id="next-week-btn" class="nav-btn">次週 ›</button>
+      </div>
+      <div id="today-btn-wrap" class="today-wrap">
+        <button id="today-btn" class="today-btn">今週に戻る</button>
+      </div>
+      <div id="calendar-grid" class="calendar-grid">
+        <!-- Days inserted by JS -->
+      </div>
+
+      <!-- Assigning mode banner -->
+      <div id="assign-banner" class="assign-banner" style="display:none;">
+        <span id="assign-banner-text"></span>
+        <button id="assign-cancel-btn" class="assign-cancel-btn">キャンセル</button>
+      </div>
+
+      <!-- Undated meal pool -->
+      <div class="pool-section">
+        <div class="pool-header">
+          <h3 class="pool-title">未定の献立</h3>
+          <button id="add-pool-btn" class="add-btn">＋ 追加</button>
+        </div>
+        <div id="pool-list" class="pool-list">
+          <!-- Pool items inserted by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Ingredients View -->
+    <section id="view-ingredients" class="view">
+      <div class="view-header">
+        <h2>食材リスト</h2>
+        <button id="add-ingredient-btn" class="add-btn">＋ 追加</button>
+      </div>
+      <div class="filter-bar">
+        <label>
+          <span>買い物日</span>
+          <input type="date" id="ingredient-date-filter" class="filter-input" />
+        </label>
+        <button id="clear-filter-btn" class="clear-btn">クリア</button>
+      </div>
+      <div id="ingredient-list" class="ingredient-list">
+        <!-- Ingredients inserted by JS -->
+      </div>
+    </section>
+
+    <!-- Notifications View -->
+    <section id="view-notifications" class="view">
+      <div class="view-header">
+        <h2>通知設定</h2>
+      </div>
+      <div class="notification-card">
+        <div class="notif-icon">🔔</div>
+        <h3>夕飯通知</h3>
+        <p class="notif-desc">毎日18:00に今夜の献立をプッシュ通知でお知らせします。</p>
+        <div id="push-status" class="push-status">
+          <span id="push-status-text">確認中...</span>
+        </div>
+        <button id="push-toggle-btn" class="push-btn">通知を有効にする</button>
+        <button id="push-test-btn" class="push-test-btn" style="display:none;">テスト通知を送る</button>
+      </div>
+      <div class="notification-info">
+        <h4>通知について</h4>
+        <ul>
+          <li>通知はデバイスごとの設定です</li>
+          <li>妻のデバイスで通知を有効にすると、毎夕18:00に献立が届きます</li>
+          <li>夫のデバイスでも通知を受け取ることができます</li>
+          <li>通知を受け取るにはブラウザの許可が必要です</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="calendar">
+      <span class="nav-icon">📅</span>
+      <span class="nav-label">カレンダー</span>
+    </button>
+    <button class="nav-item" data-view="ingredients">
+      <span class="nav-icon">🛒</span>
+      <span class="nav-label">食材</span>
+    </button>
+    <button class="nav-item" data-view="notifications">
+      <span class="nav-icon">🔔</span>
+      <span class="nav-label">通知設定</span>
+    </button>
+  </nav>
+
+  <!-- Meal Plan Modal -->
+  <div id="meal-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="meal-modal-title">献立を登録</h3>
+        <button id="meal-modal-close" class="close-btn">✕</button>
+      </div>
+      <form id="meal-form" class="modal-form">
+        <input type="hidden" id="meal-plan-id" />
+        <input type="hidden" id="meal-date" />
+        <div class="form-group">
+          <label for="meal-name-input">料理名</label>
+          <input
+            type="text"
+            id="meal-name-input"
+            placeholder="例: カレーライス"
+            class="form-input"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="meal-memo-input">メモ</label>
+          <textarea
+            id="meal-memo-input"
+            placeholder="備考・レシピメモなど"
+            class="form-textarea"
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="form-group form-check">
+          <label class="check-label">
+            <input type="checkbox" id="meal-confirmed-input" />
+            <span>確定済み</span>
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="meal-delete-btn" class="delete-btn" style="display:none;">削除</button>
+          <button type="submit" class="submit-btn">保存</button>
+        </div>
+      </form>
+
+      <!-- Comments section inside meal modal -->
+      <div id="comments-section" class="comments-section" style="display:none;">
+        <h4>コメント</h4>
+        <div id="comments-list" class="comments-list"></div>
+        <div class="comment-form">
+          <textarea id="comment-input" placeholder="コメントを入力..." class="comment-textarea" rows="2"></textarea>
+          <button id="comment-submit-btn" class="comment-submit-btn">送信</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ingredient Modal -->
+  <div id="ingredient-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="ingredient-modal-title">食材を追加</h3>
+        <button id="ingredient-modal-close" class="close-btn">✕</button>
+      </div>
+      <form id="ingredient-form" class="modal-form">
+        <input type="hidden" id="ingredient-id" />
+        <div class="form-group">
+          <label for="ingredient-name-input">食材名</label>
+          <input
+            type="text"
+            id="ingredient-name-input"
+            placeholder="例: 人参"
+            class="form-input"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ingredient-qty-input">数量</label>
+            <input
+              type="text"
+              id="ingredient-qty-input"
+              placeholder="例: 2"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="ingredient-unit-input">単位</label>
+            <input
+              type="text"
+              id="ingredient-unit-input"
+              placeholder="例: 本"
+              class="form-input"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="ingredient-date-input">買い物予定日</label>
+          <input
+            type="date"
+            id="ingredient-date-input"
+            class="form-input"
+          />
+        </div>
+        <div class="form-group">
+          <label for="ingredient-meal-input">紐付け献立</label>
+          <select id="ingredient-meal-input" class="form-select">
+            <option value="">紐付けなし</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="ingredient-delete-btn" class="delete-btn" style="display:none;">削除</button>
+          <button type="submit" class="submit-btn">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast" style="display:none;"></div>
+
+  <!-- Scripts -->
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/push.js"></script>
+  <script src="/static/js/calendar.js"></script>
+  <script src="/static/js/ingredients.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
