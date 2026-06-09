@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lakers News</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🏀</span>
+        <div>
+          <h1>Lakers News</h1>
+          <p class="tagline">最新ニュース &amp; 噂まとめ</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="last-updated" class="last-updated"></span>
+        <button id="refresh-btn" class="btn-refresh" title="更新">↻</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-tier="all">すべて</button>
+      <button class="filter-btn" data-tier="1">
+        <span class="badge badge-blue">公式</span>
+      </button>
+      <button class="filter-btn" data-tier="2">
+        <span class="badge badge-green">信頼性高</span>
+      </button>
+      <button class="filter-btn" data-tier="3">
+        <span class="badge badge-yellow">信頼性中</span>
+      </button>
+      <button class="filter-btn" data-tier="4">
+        <span class="badge badge-orange">噂</span>
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="キーワード検索..." />
+    </div>
+
+    <!-- Stats bar -->
+    <div id="stats-bar" class="stats-bar" style="display:none">
+      <span id="stat-total"></span>
+      <span class="stat-divider">|</span>
+      <span class="stat-item"><span class="badge badge-blue small">公式</span> <span id="stat-1">0</span></span>
+      <span class="stat-item"><span class="badge badge-green small">信頼性高</span> <span id="stat-2">0</span></span>
+      <span class="stat-item"><span class="badge badge-yellow small">信頼性中</span> <span id="stat-3">0</span></span>
+      <span class="stat-item"><span class="badge badge-orange small">噂</span> <span id="stat-4">0</span></span>
+    </div>
+
+    <!-- Credibility legend -->
+    <details class="legend">
+      <summary>信頼度について</summary>
+      <div class="legend-content">
+        <div class="legend-item">
+          <span class="badge badge-blue">公式</span>
+          <span>NBA.com・Lakers公式など公式発表</span>
+        </div>
+        <div class="legend-item">
+          <span class="badge badge-green">信頼性高</span>
+          <span>ESPN・The Athletic等の主要メディア。トレードマーク記者の報道</span>
+        </div>
+        <div class="legend-item">
+          <span class="badge badge-yellow">信頼性中</span>
+          <span>Bleacher Report・Yahoo Sports等。ファンメディアも含む</span>
+        </div>
+        <div class="legend-item">
+          <span class="badge badge-orange">噂</span>
+          <span>「per sources」「reportedly」等の推測・噂情報。要注意</span>
+        </div>
+      </div>
+    </details>
+
+    <!-- News feed -->
+    <div id="news-feed">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>ニュースを読み込んでいます...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
