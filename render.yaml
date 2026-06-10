@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: lakers-news
+    runtime: docker
+    dockerfilePath: ./lakers_news/Dockerfile
+    dockerContext: ./lakers_news
+    plan: free
+    region: oregon
+    envVars:
+      - key: PORT
+        value: 8080
